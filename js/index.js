@@ -7,6 +7,7 @@ window.addEventListener('load', function onLoad() {
     function userSort(user) {
       function liCreator(role) {
         var $li = $('<li>').html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
+        $li.addClass(role.substring(1, 4));
         $(role).append($li);
       }
       if (user.status === 'active') {
@@ -25,6 +26,11 @@ window.addEventListener('load', function onLoad() {
     for (i = 0; i < data.length; i++) {
       userSort(data[i]);
     }
+    (function letSort() {
+      $('.act').sortable({connectWith: '.red'});
+      $('.red').sortable({connectWith: '.act'});
+      $('.rem').sortable();
+    })();
   }
   $.get(window.url, null, listParser, 'json');
 });
