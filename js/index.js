@@ -1,13 +1,12 @@
-/*global jquery*/
+/*global ./bower_components/jquery/dist/jquery.min.js*/
 window.addEventListener('load', function onLoad() {
   'use strict';
-  // Function that work with succses answer from server
+  // Function that work with success answer from server
   function listParser(data) {
     var i;
     function userSort(user) {
       function liCreator(role) {
         var $li = $('<li>').html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
-        $li.addClass(role.substring(1, 4));
         $(role).append($li);
       }
       if (user.status === 'active') {
@@ -27,9 +26,9 @@ window.addEventListener('load', function onLoad() {
       userSort(data[i]);
     }
     (function letSort() {
-      $('.act').sortable({connectWith: '.red'});
-      $('.red').sortable({connectWith: '.act'});
-      $('.rem').sortable();
+      $('.active ul').sortable({connectWith: '.redcard ul'});
+      $('.redcard ul').sortable({connectWith: '.active ul'});
+      $('.removed ul').sortable();
     })();
   }
   $.get(window.url, null, listParser, 'json');
