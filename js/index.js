@@ -4,6 +4,7 @@ window.addEventListener('load', function onLoad() {
   // Function that work with success answer from server
   function listParser(data) {
     var i;
+    localStorage.setItem('users', data);
     function userSort(user) {
       function liCreator(role) {
         var $li = $('<li>').html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
@@ -25,8 +26,19 @@ window.addEventListener('load', function onLoad() {
     for (i = 0; i < data.length; i++) {
       userSort(data[i]);
     }
-    (function letSort() {
-      $('.active ul').sortable({connectWith: '.redcard ul'}).disableSelection();
+    // Remake to one function!!!
+    (function makeItSortable() {
+      // This function send request and work with response
+      function receiveLiHandler(event) {
+        $.ajax(window.url + '/' + event.id, {
+          method: 'POST',
+          data: { status: event.role },
+          error: function onError() {
+            console.log('Ajax reject!');
+          }
+        });
+      }
+      $('.active ul').sortable({connectWith: '.redcard ul'}, {receive: receiveLiHandler}).disableSelection();
       $('.redcard ul').sortable({connectWith: '.active ul'}).disableSelection();
       $('.removed ul').sortable().disableSelection();
     })();
