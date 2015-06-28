@@ -79,10 +79,15 @@ $(function onLoad() {
   function domEventListeners() {
     function postMaker(status) {
       return function(event, ui) {
+        console.log(ui.sender[0]);
+        console.log(ui.item[0]);
         $.ajax(window.url + '/' + ui.item[0].id, {
           type: 'POST',
           contentType: 'application/json',
-          data: {status: status}
+          data: {status: status},
+          error: function errorHandler() {
+            $(ui.sender[0]).append(ui.item[0]);
+          }
         });
       }
     }
