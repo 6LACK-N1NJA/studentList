@@ -59,9 +59,12 @@ $(function onLoad() {
   };
 // -------View-------
   function listConstructor (data) {
+    $('.active ul').sortable({connectWith: ['.redcard ul', '.removed ul'] }).disableSelection();
+    $('.redcard ul').sortable({connectWith: ['.active ul', '.removed ul']  }).disableSelection();
+    $('.removed ul').sortable().disableSelection();
     function userSort(user) {
       function liCreator(role) {
-        var $li = $('<li>').html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
+        var $li = $('<li>').attr("id", user.id).html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
         $(role).append($li);
       }
       if (user.status === 'active') {
@@ -84,12 +87,7 @@ $(function onLoad() {
   }
 // -------Controller--------
   function domEventListeners() {
-    function replaceListener (selector, callback) {
 
-    }
-    function sortListener(selector) {
-
-    }
   }
 // Action!
     userStorage.clearLocalStorage();
