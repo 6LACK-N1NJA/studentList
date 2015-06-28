@@ -1,13 +1,9 @@
 $(function onLoad() {
   'use strict';
   var userStorage = {};
-  function extend(Child, Parent) {
-    var F = function ext() {};
-    F.prototype = Parent.prototype;
-    Child.prototype = new F();
-    Child.prototype.constructor = Child;
-    Child.supperclass = Parent.prototype;
-  }
+  var $activeList = $('.active ul');
+  var $redList = $('.redcard ul');
+  var $removedList = $('.removed ul');
   /**
    * Here I try to realise MVC.
    * I do it in one file,cause it part of task.
@@ -59,12 +55,9 @@ $(function onLoad() {
   };
 // -------View-------
   function listConstructor (data) {
-    $('.active ul').sortable({connectWith: ['.redcard ul', '.removed ul'] }).disableSelection();
-    $('.redcard ul').sortable({connectWith: ['.active ul', '.removed ul']  }).disableSelection();
-    $('.removed ul').sortable().disableSelection();
     function userSort(user) {
       function liCreator(role) {
-        var $li = $('<li>').attr("id", user.id).html('<h2>' + user.name + '</h2><h3>' + user.phone + '</h3>');
+        var $li = $('<li>').attr("id", user.id).html('<h3>' + user.name + '</h3><h4>' + user.phone + '</h4>');
         $(role).append($li);
       }
       if (user.status === 'active') {
@@ -81,13 +74,32 @@ $(function onLoad() {
     }
     // Here we parse our associate massive
     _.map(data, userSort);
-    /* Old version for (var i = 0; i < data.length; i++) {
-      userSort(data[i]);
-    }*/
   }
 // -------Controller--------
   function domEventListeners() {
-
+    function postMaker(status) {
+      return function(event, ui) {
+        $.ajax(window.url + '/' + ui.item[0].id, {
+          type: 'POST',
+          contentType: 'application/json',
+          data: {status: status}
+        });
+      }
+    }
+    $activeList.sortable({
+      connectWith: ['.redcard ul', '.removed ul'],
+      receive: postMaker("active")
+    }).disableSelection();
+    $redList.sortable({
+      connectWith: ['.active ul', '.removed ul'],
+      receive: postMaker("redcard")
+    }).disableSelection();
+    $removedList.sortable({
+      receive: postMaker("removed")
+    }).disableSelection();
+    $activeList.on('sortreceive', postMaker('active'));
+    $redList.on('sortreceive', postMaker('redcard'));
+    $removedList.on('sortreceive', postMaker('removed'));
   }
 // Action!
     userStorage.clearLocalStorage();
